@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Задание №2</title>
+      		<meta charset='utf-8' />
+	</head>
+	<body>
+    <canvas id="paintbox" width="500" height="500"></canvas><br />
+    Сдвинуть по X: <input type="range" id="distX" min="0" max="500" value="250"><br />
+    Сдвинуть по Y: <input type="range" id="distY" min="0" max="500" value="250"><br />
+    Приблизить: <input type="range" id="scale" min="1" max="30" value="15"><br />
+    Повернуть: <input type="range" id="rotate" min="0" max="360" value="0">
+    <input type="button" onclick="start()" value="Пуск">  
+		<script>
+    var c;
+    var x = [];
+    var y = [];
+ 
+    c = document.getElementById('paintbox').getContext('2d');
+    
+    var t=-1*Math.PI;
+     while (t <= Math.PI) {
+       x.push(t);
+       y.push(Math.sin(t));
+       t = t + Math.PI/18;
+     }
+  
+function start(){
+    let XD=Number(document.getElementById('distX').value);
+    let YD=Number(document.getElementById('distY').value);
+    let scl=Number(document.getElementById('scale').value);
+    let angle=Number(document.getElementById('rotate').value)/180*Math.PI;
+
+    c.fillStyle = 'white';
+    c.fillRect(0,0,500,500);
+    c.beginPath();
+    c.strokeStyle = '#f5f0e8';
+    for(let i = 0; i < 500; i += scl) {
+      c.moveTo(i, 0);
+      c.lineTo(i, 500);
+      }
+
+    for(let i = 0; i < 500; i += scl) {
+      c.moveTo(Math.PI, i);
+      c.lineTo(500, i);
+      }
+    c.stroke();
+    c.closePath();
+
+    // Ось ординат
+    c.beginPath();
+    c.strokeStyle = 'black';
+    c.moveTo(250, 0);
+    c.lineTo(250, 500);
+    c.stroke();
+    c.closePath();
+
+    // Ось абсцисс
+    c.beginPath();
+    c.strokeStyle = 'black';
+    c.moveTo(0, 250);
+    c.lineTo(500, 250);
+    c.stroke();
+    c.closePath();
+
+    c.strokeStyle = 'red';
+    c.beginPath();
+    for(let i=0; i<x.length; i++){
+        sx=XD+scl*(y[i]*Math.sin(angle)-x[i]*Math.cos(angle));
+        sy=YD+scl*(y[i]*Math.cos(angle)+x[i]*Math.sin(angle));
+        if(i==0) c.moveTo(sx, sy); else c.lineTo(sx, sy);
+    }
+    c.stroke();   
+}
+		</script>
+	</body>
+</html>

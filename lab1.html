@@ -1,0 +1,137 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Лаба 1</title>
+      		<meta charset='utf-8' />
+	</head>
+	<body>
+		<canvas id="canvas" width="1000" height="1000"></canvas>
+		<script>
+			canvas = document.getElementById('canvas');
+			c = canvas.getContext('2d');
+		</script>
+		<script>
+            
+
+            setInterval(draw, 30);
+            var a = 215;
+            var time = 1;
+            function draw() {
+            c.clearRect(0, 0, 1000, 1000);
+
+            
+
+            c.beginPath();
+            c.strokeStyle = 'black'
+            c.lineWidth = 30;
+            c.strokeRect(140, 140, 720, 400);
+            c.fill();
+            c.closePath();
+            
+            c.beginPath();
+            c.fillStyle = '#5c794b';
+            c.fillRect(185,185,630,310);
+            c.closePath();
+
+            c.fillStyle = "#567347";
+            c.beginPath();
+            c.moveTo(400, 495); 
+            c.lineTo(815, 495);
+            c.lineTo(815, 185); 
+            c.lineTo(600, 185);  
+            c.fill();
+            c.closePath();
+            
+            c.strokeStyle = "#c69c6c";
+            c.beginPath();
+            c.strokeRect(170,170,660,340);
+            c.fill();
+            c.closePath();
+
+            // Клавиатура
+
+            c.fillStyle = "#f2f2f2";
+            c.beginPath();
+            c.moveTo(125, 555); 
+            c.lineTo(25, 755);
+            c.lineTo(975, 755); 
+            c.lineTo(875, 555);  
+            c.fill();
+            c.closePath();
+
+            c.strokeStyle = "#dedede";
+            c.lineWidth = 20;
+            c.beginPath();
+            c.moveTo(25,765);
+            c.lineTo(975,765)
+            c.stroke();
+            c.closePath();
+
+            c.fillStyle = "#dedede";
+            c.beginPath();
+            c.moveTo(450, 730); 
+            c.lineTo(550, 730);
+            c.lineTo(540, 690); 
+            c.lineTo(460, 690);  
+            c.fill();
+            c.closePath();
+
+            c.fillStyle = "#dedede";
+            c.beginPath();
+            c.moveTo(135, 570); 
+            c.lineTo(85, 670);
+            c.lineTo(915, 670); 
+            c.lineTo(865, 570);   
+            c.fill();
+            c.closePath();
+
+            c.beginPath();  
+            c.fillStyle = "dedede"
+            c.arc(a, 345, 30, 0, 360,false);
+            time++;
+            if (time > 1 && time < 116) {
+            a= a+5;
+            }
+            c.closePath();
+            c.fill();
+
+            c.beginPath();
+            c.strokeStyle = 'black';
+            c.lineWidth = 0.09;
+            for(let i = 0; i < 4; i++) {
+                let x = 0;
+                let y = 0;
+
+                if(i == 1) {
+                    x = 660;
+                    y = 340;
+                }
+                if(i == 2) {
+                    x = 690;
+                    y = 0;
+                }
+                if(i == 3) {
+                    x = 0;
+                    y = 370;
+                }
+
+                c.moveTo(155 + x, 155 + y);
+
+                if(i == 2) {
+                    x = 630;
+                    y = 0;
+                }
+                if(i == 3) {
+                    x = 0;
+                    y = 310;
+                }
+
+                c.lineTo(185 + x, 185 + y);      
+            }
+            c.closePath();
+            c.stroke();
+            
+        }            
+		</script>
+	</body>
+</html>

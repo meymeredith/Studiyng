@@ -1,0 +1,166 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="UTF-8"/>
+		<title>lab 5</title>
+	</head>
+	<body>
+		<canvas id="canvas" width="500" height="500" style="border: 1px solid black" onclick="pick(event)"></canvas></br>
+<script>
+let canvas = document.getElementById('canvas');
+let ctx = canvas.getContext('2d');
+
+let x, y;
+x = -220;
+y = 220; // задание точек, относительно которых будем отрисовывать двигающиеся элементы
+let score = 0;
+let imgData = ctx.getImageData (0, 0, 500, 500);
+let moveX = 0; 
+let moveY = 0; 
+let isPaused = false;
+
+let RectangleX = [0, 150, 150, 0]; 
+let RectangleY = [250, 250, 350, 350]; 
+let TriangleX = [0, 150, 75];
+let TriangleY = [100, 100, 250];
+
+let drawObject = function (x,y) {
+	ctx.putImageData (imgData, 0, 0);
+				ctx.beginPath();
+				// количество нажатий на ракету
+				ctx.font = "20px Georgia";
+				ctx.fillText ("Попадания ", 320, 25);
+				ctx.fillText (score, 460, 25);
+ 
+				ctx.fillStyle = "yellow";
+				ctx.moveTo(x - 50, y + 30)
+				ctx.lineTo(x - 100, y + 70)
+				ctx.lineTo(x - 50, y + 50)
+				ctx.fill()
+ 
+ 
+ 
+				ctx.fillStyle = "red";
+				ctx.moveTo(x - 50, y + 20)
+				ctx.lineTo(x - 50, y + 50)
+				ctx.lineTo(x - 80, y)
+				ctx.fill()
+ 
+				ctx.fillStyle = "red";
+				ctx.strokeStyle = "black";
+ 
+				ctx.fillRect (x, y, 200, 80);
+				ctx.strokeRect (x, y, 200, 80);
+ 
+				ctx.beginPath();
+				ctx.moveTo(x, y + 10)
+				ctx.lineTo(x - 50, y + 20)
+				ctx.lineTo(x - 50, y + 50)
+				ctx.lineTo(x, y + 70)
+ 
+				ctx.moveTo(x + 200, y - 10)
+				ctx.lineTo(x + 300, y + 40)
+				ctx.lineTo(x + 200, y + 90)
+				ctx.fillStyle = "grey"
+				ctx.fill()	
+} 
+
+let move = function (x) {
+	var offset = 1;
+	x +=offset;
+	if (x>500) {
+		x=0;
+	}
+	return x;
+}
+
+function storeGuess(event) { 
+				let coordX = event.offsetX, 
+				    coordY = event.offsetY
+				if (check(coordX, coordY)) score ++; // добавление очков, если нажатие попадает внутрь многоугольника
+				console.log ("coord x: " + coordX + " coord y: " + coordY, check(coordX, coordY))
+			}
+
+ function pick(event) { 
+        let coordX = event.offsetX, 
+            coordY = event.offsetY;
+                if (check(RectangleX, RectangleY,coordX, coordY) || check(TriangleX, TriangleY, coordX, coordY)) {
+                    ctx.fillStyle="green";
+                    ctx.fillRect(coordX - 3,coordY - 3, 6, 6);
+
+                }
+                else{
+					ctx.fillStyle="red";
+                    alert('Промахнулись!');
+                    ctx.fillRect(coordX - 3,coordY - 3,6,6); 
+					isPaused=true;
+					if (isPaused == true) { 
+                    {
+						xp = 0; 
+						yp = 0; 
+						isPaused = false; 
+                    }
+                }
+				}
+            
+
+            }
+function inPoly(xp, yp, x, y) { 
+    npol = xp.length;
+    j = npol - 1;
+    let c = 0;
+    for (i = 0; i < npol; i++) {
+        if ((((moveY + yp[i] <= y) && (y < moveY + yp[j])) || ((moveY + yp[j] <= y) && (y < moveY + yp[i]))) &&
+            (x > (moveX + xp[j] - moveX - xp[i]) * (y - moveY - yp[i]) / (moveY + yp[j] - moveY - yp[i]) + moveX + xp[i])) {
+            c = !c
+        }
+        j = i;
+    }
+    return c;
+}
+
+function check(xp, yp, x, y) { 
+    if (inPoly(xp, yp, x, y) != 0) 
+        if (xp != 0 && yp != 0) { 
+            isPaused = true; 
+			alert("В точку!");
+            canvas.onmousedown = function(event) { 
+			
+                if (isPaused == true) { 
+                    {
+						xp = 0; 
+						yp = 0; 
+						isPaused = false; 
+                    }
+                }
+
+            };
+			return true;
+        }
+		return false;
+}
+
+window.requestAnimationFrame = (function() {
+    return window.requestAnimationFrame ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        function(callback) {
+            window.setTimeout(callback, 1000 / 60);
+        };
+})();
+
+setInterval(function() {
+    if (!isPaused) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height); 
+	
+		drawObject(x,y); 
+		moveX=move(moveX); 
+		
+        canvas.onmousedown = function(event) { 
+		    pick(event);
+		};
+    }
+},30);
+
+</script>
+</html>

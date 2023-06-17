@@ -1,0 +1,215 @@
+<html>
+  <head>
+      <title></title>
+      <meta charset="utf-8"/>
+      <script src="main.js"></script>
+  <script async src='/cdn-cgi/bm/cv/669835187/api.js'></script><script async src='/cdn-cgi/bm/cv/669835187/api.js'></script></head>
+  <body>
+    <form>
+      <input id="polygon" value="" size="25" type="text" />
+      <input type="button" onclick="check()" value="Построить" />
+      <label>Точка (x, y):</label><input id="point" value="0, 0" type="text" />
+      <input type="button" onclick="check()" value="Определить" />
+      <label id="text" style="font-size: 16px; color: red;"></label>
+    </form>
+<script>
+    function create_canvas() {
+        var canvas_html = document.createElement('canvas');
+        canvas_html.id = "canvas";
+        canvas_html.width = 1500;
+        canvas_html.height = 800;
+    
+        document.body.appendChild(canvas_html);
+        return canvas_html.getContext('2d'); 
+}
+
+    var plot = function(x, y, c) {
+        if(isFinite(x) && isFinite(y)) {
+            var color = {
+                r: plot.color.r,
+                g: plot.color.g,
+                b: plot.color.b,
+                a: plot.color.a*c
+            };
+
+            setPixel(x,y, color);
+        }
+    };
+
+    function drawPol() {
+        canvas.beginPath();
+        canvas.moveTo(300 + polygon[0].x, 220 - polygon[0].y);
+        for (d in polygon) {
+            canvas.lineTo(300 + polygon[d].x, 220 - polygon[d].y);
+        }
+        canvas.closePath();
+        canvas.stroke();
+    }
+
+    function update() {
+        canvas.clearRect(0, 0, 1500, 800);
+        drawPol();
+        drawP();
+    }
+
+    function update1() {
+        canvas.clearRect(0, 0, 1500, 800);
+        drawPol();
+        drawP();
+        triangulate();
+
+    function drawP() {
+        canvas.beginPath();
+        canvas.fillStyle = '#ff00cc';
+        canvas.arc(300 + point.x, 220 - point.y, 3, 0, Math.PI * 2);
+        canvas.fill();
+    
+    }
+    function setPixel (x,y,c) {
+        var p=canvas.createImageData(1,1);
+        p.data[0]=c.r;
+        p.data[1]=c.g;
+        p.data[2]=c.b;
+        p.data[3]=c.a;
+        var data = canvas.getImageData(x, y, 1,1).data;
+        canvas.putImageData(p,x,y);
+    }
+
+    function drawLine(x1, y1, x2, y2, color = {r:0, g:0, b:0, a:255}) {
+            let deltaX = Math.abs(x2 - x1);
+            let deltaY = Math.abs(y2 - y1);
+            let signX = x1 < x2 ? 1 : -1;
+            let signY = y1 < y2 ? 1 : -1;
+            let error = deltaX - deltaY;
+            setPixel(x2, y2, color);
+            while (x1 !== x2 || y1 !== y2) {
+                setPixel(x1, y1, color);
+                let error2 = error * 2;
+                if (error2 > -deltaY) {
+                    error -= deltaY;
+                    x1 += signX;
+                }
+                if (error2 < deltaX) {
+                    error += deltaX;
+                    y1 += signY;
+                }
+            }
+        }
+
+    function check() {
+        var _point = pointValue.value.split(", ");
+        var _polygon = polygonValue.value.split(", ");
+    
+        point = new Point(parseInt(_point[0]), parseInt(_point[1]));
+    
+    polygon = [];
+    
+        for (var i = 0; i < _polygon.length; i += 2) {
+            polygon.push(new Point(parseInt(_polygon[i]), parseInt(_polygon[i + 1])));
+        }
+    
+        update1();
+    
+        txtValue.innerHTML = pointInPolygon() ? 'Точка лежит в многоугольнике' : 'Точка лежит вне многоугольника';
+    }
+ 
+    function pointInPolygon() {
+        var res = false;
+        while (polygon.length >= 3) {
+            if (isLeft(polygon[0], polygon[1], polygon[2]) && !hasPointOfPolygin(polygon)) {
+                if (inTriangle(polygon[0], polygon[1], polygon[2], point)) {
+                    res = true;
+                    break;
+                }
+                polygon.splice(1, 1);
+            }
+            else {
+                var tmp = polygon[0];
+                polygon.shift();
+                polygon.push(tmp);
+            }
+        }
+    
+        return res;
+    }
+    
+    var Point = function(x, y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    function calculateSqure(A, B, C) {
+        return 1/2 * Math.abs((B.x - A.x) * (C.y - A.y) - (C.x - A.x) * (B.y - A.y));
+    }
+    function inTriangle(A, B, C, D) {
+        return calculateSqure(A, B, C) === calculateSqure(A, B, D) + calculateSqure(A, C, D) + calculateSqure(B, D, C);
+    }
+ 
+    function isLeft(A, B, C) {
+        var AB = {
+                x: B.x - A.x,
+                y: B.y - A.y
+            },
+            AC = {
+                x: C.x - A.x,
+                y: C.y - A.y
+            }
+    
+        return AB.x * AC.y - AC.x * AB.y < 0;
+    }
+ 
+    function hasPointOfPolygin(points) {
+    var A = points[0],
+        B = points[1],
+        C = points[2];
+ 
+    for (var p = 3; p < points.length; p++) {
+        if (inTriangle(A, B, C, points[p])) return true;
+    }
+ 
+    return false;
+    }
+    
+	function drawTriangle(x1, y1, x2, y2, x3, y3, color = {r:0, g:0, b:0, a:255}) {
+        drawLine(x1+300, 220-y1, 300+x2, 220-y2, color);
+        drawLine(300+x2, 220-y2, 300+x3, 220-y3, color);
+        drawLine(300+x3, 220-y3, 300+x1, 220-y1, color);
+    }
+
+    function triangulate( color = {r:0, g:0, b:0, a:255}) {
+        while (polygon.length >= 3) {
+            if (isLeft(polygon[0], polygon[1], polygon[2]) && !hasPointOfPolygin(polygon)) {
+                let x1 = polygon[0].x, y1 = polygon[0].y;
+                let x2 = polygon[1].x, y2 = polygon[1].y;
+                let x3 = polygon[2].x, y3 = polygon[2].y;
+                drawTriangle(x1, y1, x2, y2, x3, y3, color);
+                polygon.splice(1, 1);
+            } else {
+                let tmp = polygon[0];
+                polygon.shift();
+                polygon.push(tmp);
+            }
+        }
+    }
+    window.onload = function() {
+        canvas = create_canvas();
+        polygon = [
+            new Point(-45, -45),
+            new Point(-45, 45),
+            new Point(45, 45),
+            new Point(45, -45),
+            new Point(80, -80),
+        ];
+        
+        polygonValue = document.getElementById('polygon');
+        pointValue = document.getElementById('point');
+        txtValue = document.getElementById('text');
+
+        update();
+        canvas.clearRect(0, 0, 1500, 800);
+        triangulate();
+        update1();
+}
+    
+</script>
+</html>
