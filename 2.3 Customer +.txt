@@ -1,0 +1,18 @@
+class Person():
+    def __init__(self,name,adress,phone):
+        self.name = name
+        self.adress = adress
+        self.phone = phone
+
+class Customer(Person):
+    def __init__(self,name,adress,phone,custNumber,bool):
+        Person.__init__(self,name,adress,phone)
+        self.custNumber = custNumber
+        self.bool = bool
+    
+    def showCustomerInformation(self):
+        print ('{},{},{},{},{}'.format(self.name,self.adress,self.phone,self.custNumber,self.bool))
+        
+        
+customer1=Customer("Vladimir","Bespalova 45b", "+79777777777","№1",0)
+customer1.showCustomerInformation()

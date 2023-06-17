@@ -1,0 +1,57 @@
+import math
+import random
+
+
+def dist(point1, point2):
+    return math.sqrt((point1[0] - point2[0])**2 + (point1[1] - point2[1])**2)
+
+def kMeans(x, kNum):
+    centroids = x[:k]
+    clusters = [[] for _ in range(k)]
+
+    while True:
+        for i in range(len(x)):
+            point = x[i]
+            clc = None
+            cld = float('inf')
+            for j in range(len(centroids)):
+                centroid = centroids[j]
+                distance = dist(point, centroid)
+                if distance < cld:
+                    cld = distance
+                    clc = j
+            clusters[clc].append(point)
+
+        new_centroids = []
+        for cluster in clusters:
+            if len(cluster) == 0:
+                new_centroid = x[random.randint(-10, 10)]
+            else:
+                new_centroid = [sum([c[0] for c in cluster])/len(cluster), sum([c[1] for c in cluster])/len(cluster)]
+            new_centroids.append(new_centroid)
+
+        if new_centroids == centroids:
+            break
+        else:
+            centroids = new_centroids
+            clusters = [[] for _ in range(k)]
+
+    return clusters, centroids
+
+k = 5
+x = []
+for i in range(15):
+    fillx = [random.randint(-10, 10) for j in range(2)]
+    x.append(fillx)
+
+print(x)
+clusters, centroids = kMeans(x, k)
+
+print("Кластеры:")
+for i in range(len(clusters)):
+    cluster = clusters[i]
+    print(f"Кластер {i+1}: {cluster}")
+
+print("Центроиды:")
+for centroid in centroids:
+    print(centroid)

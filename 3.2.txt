@@ -1,0 +1,31 @@
+import numpy as np
+
+res = np.array([1, -1, 1, -1, 1, -1, -1, 1, 1, -1])
+points = np.array([[1, 1, 1],[9.4, 6.4, 1],[2.5, 2.1, 1],[8, 7.7, 1],[0.5, 2.2, 1],[7.9, 8.4, 1],[7, 7, 1],[2.8, 0.8, 1],[1.2, 3, 1],[7.8, 6.1, 1]])
+w = np.array([0.75, 0.5, -0.6])
+
+def sign(y):
+    return 1 if y > 0 else -1
+
+def yp(p, w):
+    return round(sum(p*w), 5)
+
+def wp(lr, w, point, need_res, n):
+    return w + lr * (need_res - sign(n)) * point
+
+e = 0
+while True:
+    e_er = 0
+    print(f'Эпоха {e+1}')
+    for i in range(len(points)):
+        p = points[i]
+        net = yp(p, w)
+        if sign(net) != sign(res[i]):
+            w = wp(0.2, w, p, res[i], net)
+            e_er += 1
+            print(f'Сеть на итерации {i}: {net}')
+            print(f'Веса на итерации {i}: {w}')
+    e += 1
+    print(f'_________________________________\nКоличество ошибок в эпохе {e}: {e_er}')
+    if e_er == 0:
+        break

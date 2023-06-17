@@ -1,0 +1,37 @@
+class Animal:
+    
+    def __init__(self,name,breed):
+        self.breed = breed
+        self.name = name
+    
+    def abstract_behavior(self):
+        pass
+        
+    @staticmethod
+    def stat_behavior(name,breed):
+        print ('Ваш питомец ' + '{} {}'.format(name,breed))
+
+class Cat(Animal):
+    def __init__(self,name,breed,age,voice):
+        Animal.__init__(self,name,breed)
+        self.age = age
+        self.voice = voice
+        
+    def abstract_behavior(self):
+        print ('{} {} {} {}'.format(self.name,self.breed,self.age,self.voice) + ': Meow')
+class Dog(Animal):
+    def __init__(self,name,breed,age,bool):
+        Animal.__init__(self,age,bool)
+        self.age = age
+        self.bool = bool # Обучен командам или нет
+        
+    def abstract_behavior(self):
+        print ('Собака подпрыгивает от радости')
+        
+cat1 = Cat('Барсик','дворняжка','11 лет','(басом)')
+cat1.abstract_behavior()
+
+dog1 = Dog('Шарик','немецкая овчарка',4,1)
+dog1.abstract_behavior()
+
+Animal.stat_behavior('Йохан','Персидский')
